@@ -14,9 +14,9 @@ const upgrades = [
     new Upgrade("clicker", "Clicker", "Multiplies cookies per click", "res/upgrade_icons/clicker.png", 15, 0),
     new Upgrade("flower", "VictorFlower", "Nice flower does cool stuff", "res/upgrade_icons/flower.png", 45, 0),
     new Upgrade("kid", "VictorKid", "Clicks 4x automatically but weakens your click by 1", "res/upgrade_icons/kid-victor.png", 85, 0),
-    new Upgrade("gym", "VictorGym", "Trains your click for +3 Victors per click", "res/upgrade_icons/clicker.png", 100, 0),
-    new Upgrade("garden", "VictorGarden", "Grows +10 Victors automatically every second", "res/upgrade_icons/flower.png", 175, 0),
-    new Upgrade("factory", "VictorFactory", "Produces +50 Victors per second and +2 Victors per click", "res/upgrade_icons/kid-victor.png", 225, 0),
+    new Upgrade("gym", "VictorGym", "Trains your click for +3 Victors per click", "res/upgrade_icons/victorGym.png", 100, 0),
+    new Upgrade("garden", "VictorGarden", "Grows +10 Victors automatically every second", "res/upgrade_icons/victorGarden.png", 175, 0),
+    new Upgrade("factory", "VictorFactory", "Produces +50 Victors per second and +2 Victors per click", "res/upgrade_icons/victorFactory.png", 225, 0),
 ];
 
 upgrades.forEach(u => u.originalPrice = u.price);
