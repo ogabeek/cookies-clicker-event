@@ -39,9 +39,11 @@ let rebirthCoins = 0;
 let globalMultiplier = 1.0;
 
 // Ochrana autoclickeru - zaznamenání času posledního vytvořeného textu
-let lastFloatingTextTime = 0; 
+let lastFloatingTextTime = 0;
 
-// --- AUDIO SYSTÉM (Modulární správa zvuků) ---
+
+// ─── AUDIO SYSTÉM (Opravené přehrávání na pozadí v loopu) ───
+
 const sounds = {
     bg: new Audio("sounds/bg.mp3"),
     click: new Audio("sounds/click.mp3"),
@@ -49,9 +51,11 @@ const sounds = {
     rebirth: new Audio("sounds/rebirth.mp3")
 };
 
-sounds.bindBg = false;
+// NASTAVENÍ LOOPU (Hudba pojede neustále dokola)
 sounds.bg.loop = true;
-sounds.bg.volume = 0.4;
+sounds.bg.volume = 0.4; // Hlasitost na 40%, aby to neřvalo
+
+let isBgMusicPlaying = false;
 
 function playSound(soundName) {
     if (sounds[soundName]) {
@@ -60,12 +64,29 @@ function playSound(soundName) {
     }
 }
 
-function handleFirstInteractionHudba() {
-    if (!sounds.bindBg) {
-        sounds.bg.play().catch(() => {});
-        sounds.bindBg = true;
+// Funkce, která se pokusí hudbu spustit hned při prvním kontaktu se stránkou
+function tryToPlayBgMusic() {
+    if (!isBgMusicPlaying) {
+        sounds.bg.play()
+            .then(() => {
+                isBgMusicPlaying = true;
+                console.log("Hudba na pozadí se úspěšně spustila v nekonečné smyčce.");
+               
+                // Jakmile hudba hraje, odebereme globální listenery z dokumentu
+                document.removeEventListener("click", tryToPlayBgMusic, true);
+                document.removeEventListener("keydown", tryToPlayBgMusic, true);
+            })
+            .catch((error) => {
+                // Pokud prohlížeč spuštění stále blokuje, necháme listenery aktivní na další klik
+                console.log("Prohlížeč zablokoval automatické spuštění. Čeká se na další interakci...", error);
+            });
     }
 }
+
+// Zachytáváme jakýkoliv klik nebo stisk klávesy ihned na začátku (useCapture = true)
+document.addEventListener("click", tryToPlayBgMusic, true);
+document.addEventListener("keydown", tryToPlayBgMusic, true);
+
 
 function getRebirthCost() {
     return REBIRTH_BASE_COST * (rebirths + 1);
@@ -154,10 +175,10 @@ function toggleAchievements() {
 
 function updateUI() {
     counterText.textContent = cookieCount.toLocaleString() + " Coins";
-    
+   
     let activeCps = Math.ceil(cookiesPerSecond * globalMultiplier);
     let activeCpc = Math.ceil(clickMultiplier * globalMultiplier);
-    
+   
     rateText.textContent = activeCps.toLocaleString() + " Coins per second | " + activeCpc.toLocaleString() + " Coins per click";
     updateRebirthUI();
     checkAchievements();
@@ -219,9 +240,9 @@ function rebirth() {
 
     resetUpgradeElements();
     clearUpgradeVisuals();
-    playSound("rebirth"); 
+    playSound("rebirth");
     updateUI();
-    
+   
     const coinsDisplay = document.getElementById("rebirth_coins_display");
     if (coinsDisplay) coinsDisplay.textContent = "Rebirth Coins: " + rebirthCoins;
 }
@@ -233,7 +254,7 @@ if (rebirthButton) {
 function triggerSpinAnimation() {
     if (!cookieContainer) return;
     cookieContainer.classList.remove("click_spin");
-    void cookieContainer.offsetWidth; 
+    void cookieContainer.offsetWidth;
     cookieContainer.classList.add("click_spin");
 }
 
@@ -246,27 +267,26 @@ function spawnFloatingText(x, y, value) {
     const el = document.createElement("div");
     el.className = "floating_click_text";
     el.textContent = "+" + value;
-    
-    const randomX = (Math.random() - 0.5) * 120; 
+   
+    const randomX = (Math.random() - 0.5) * 120;
     const randomY = (Math.random() * -60) - 60;  
 
     el.style.setProperty("--random-x", randomX + "px");
     el.style.setProperty("--random-y", randomY + "px");
     el.style.left = x + "px";
     el.style.top = y + "px";
-    
+   
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 800);
 }
 
 cookieButton.addEventListener("click", (e) => {
-    handleFirstInteractionHudba();
     totalClicks++;
     let clickValue = Math.ceil(clickMultiplier * globalMultiplier);
     cookieCount += clickValue;
     spawnFloatingText(e.clientX, e.clientY, clickValue);
-    triggerSpinAnimation(); 
-    playSound("click"); 
+    triggerSpinAnimation();
+    playSound("click");
     updateUI();
 });
 
@@ -282,16 +302,15 @@ document.addEventListener("keydown", (e) => {
     e.preventDefault();
     if (document.activeElement === cookieButton) cookieButton.blur();
 
-    handleFirstInteractionHudba();
     const rect = cookieButton.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
     totalClicks++;
-    
+   
     let clickValue = Math.ceil(clickMultiplier * globalMultiplier);
     cookieCount += clickValue;
     spawnFloatingText(cx, cy, clickValue);
-    triggerSpinAnimation(); 
+    triggerSpinAnimation();
     playSound("click");
     updateUI();
 });
@@ -405,7 +424,7 @@ function buyUpgrade(upgrade, counterEl) {
     counterEl.textContent = "x" + upgrade.count;
     counterEl.closest(".upgrade").querySelector(".upgrade_price").textContent = upgrade.price + "$";
 
-    playSound("buy"); 
+    playSound("buy");
     updateUI();
 }
 
@@ -641,7 +660,7 @@ updateUI();
 
 const skillNodes = [
     { id: "root", label: "X", x: 550, y: 700, cost: 0, type: "start", unlocked: true, parent: null, desc: "Starting Point" },
-    
+   
     // Levá větev - Clicker Upgrady
     { id: "clicker_silver", label: "🖱️", x: 400, y: 600, cost: 1, type: "silver", target: "clicker", desc: "Silver Clicker: Unlocks Silver Rank Upgrade", unlocked: false, parent: "root", newIcon: "res/upgrade_icons/clicker_silver.png" },
     { id: "clicker_gold", label: "🖱️", x: 400, y: 500, cost: 3, type: "gold", target: "clicker", desc: "Gold Clicker: Unlocks Gold Rank Upgrade", unlocked: false, parent: "clicker_silver", newIcon: "res/upgrade_icons/clicker_gold.png" },
@@ -651,7 +670,7 @@ const skillNodes = [
     { id: "flower_silver", label: "🌸", x: 550, y: 530, cost: 1, type: "silver", target: "flower", desc: "Silver Flower: Unlocks Silver Rank Flower", unlocked: false, parent: "root", newIcon: "res/upgrade_icons/flower_silver.png" },
     { id: "flower_gold", label: "🌸", x: 550, y: 410, cost: 2, type: "gold", target: "flower", desc: "Gold Flower: Unlocks Gold Rank Flower", unlocked: false, parent: "flower_silver", newIcon: "res/upgrade_icons/flower_gold.png" },
     { id: "flower_diamond", label: "🌸", x: 550, y: 290, cost: 4, type: "diamond", target: "flower", desc: "Diamond Flower: Unlocks Diamond Rank Flower", unlocked: false, parent: "flower_gold", newIcon: "res/upgrade_icons/flower_diamond.png" },
-    
+   
     // Pravá větev - Globální multiplikátor (*1.2, *1.4, *2.0)
     { id: "mult_silver", label: "🪙", x: 700, y: 600, cost: 1, type: "silver", target: "global", multiplier: 1.2, desc: "Silver Boost: Multiplies all incomes by 1.2x", unlocked: false, parent: "root" },
     { id: "mult_gold", label: "🪙", x: 700, y: 500, cost: 3, type: "gold", target: "global", multiplier: 1.4, desc: "Gold Boost: Multiplies all incomes by 1.4x", unlocked: false, parent: "mult_silver" },
@@ -668,7 +687,7 @@ function toggleupgrades() {
 
 function drawSkillTree() {
     const mapEl = document.getElementById("skill_tree_map");
-    mapEl.innerHTML = ""; 
+    mapEl.innerHTML = "";
     document.getElementById("rebirth_coins_display").textContent = "Rebirth Coins: " + rebirthCoins;
 
     skillNodes.forEach(node => {
@@ -676,14 +695,14 @@ function drawSkillTree() {
         div.className = `skill_node ${node.type}`;
         div.style.left = node.x + "px";
         div.style.top = node.y + "px";
-        
+       
         if (node.newIcon && node.type !== "start") {
             div.style.backgroundImage = `url("${node.newIcon}")`;
-            div.textContent = ""; 
+            div.textContent = "";
         } else {
             div.textContent = node.label;
         }
-        
+       
         let isLocked = false;
         if (node.parent) {
             const parentNode = skillNodes.find(n => n.id === node.parent);
@@ -705,7 +724,7 @@ function drawSkillTree() {
             if (rebirthCoins >= node.cost) {
                 rebirthCoins -= node.cost;
                 node.unlocked = true;
-                playSound("buy"); 
+                playSound("buy");
                 applySkillUpgrade(node);
                 drawSkillTree();
             } else {
@@ -717,7 +736,6 @@ function drawSkillTree() {
     });
 }
 
-// FIX: Aktualizuje ranky, obrázky a obíhající ruce bez rozbíjení ID v DOMu
 function applySkillUpgrade(node) {
     if (node.target === "global") {
         globalMultiplier = node.multiplier;
@@ -726,17 +744,17 @@ function applySkillUpgrade(node) {
         if (gameUpgrade) {
             if (node.newIcon) {
                 gameUpgrade.iconUrl = node.newIcon;
-                
+               
                 const imgEl = document.querySelector(`#upgrade_${gameUpgrade.name} .upgrade_icon`);
                 if (imgEl) imgEl.src = node.newIcon;
-                
+               
                 if (gameUpgrade.name === "clicker") {
                     cookieContainer.querySelectorAll(".orbit_hand").forEach(hand => {
                         hand.src = node.newIcon;
                     });
                 }
             }
-            
+           
             const hrdTitle = node.type.toUpperCase() + " " + gameUpgrade.name.toUpperCase();
             const titleEl = document.querySelector(`#upgrade_${gameUpgrade.name} .upgrade_title`);
             if (titleEl) titleEl.textContent = hrdTitle;
