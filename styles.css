@@ -4,13 +4,12 @@
     font-family: 'Arial', sans-serif;
 }
 
-/* Removes default browser margins so nav is edge-to-edge */
 body {
     margin: 0;
     padding: 0;
 }
 
-/* ── nav ────────────────────────────────────────────── */
+/* ── nav (Horní lišta) ──────────────────────────────── */
 nav {
     display: flex;
     align-items: center;
@@ -21,7 +20,7 @@ nav {
     box-sizing: border-box;
 }
 
-h1 {
+nav h1 {
     font-weight: 900;
     text-transform: uppercase;
     line-height: 0.85;
@@ -42,54 +41,126 @@ nav > button {
     flex-shrink: 0;
 }
 
-nav > button:HOVER {
-    background-color: #ffe7a1;
-}
+nav > button:HOVER { background-color: #ffe7a1; }
+nav > button:ACTIVE { background-color: #e6ac01; }
 
-nav > button:ACTIVE {
-    background-color: #e6ac01;
-}
-
-#achievements_button { background-image: url("res/achievement.png") ;    BACKGROUNd-size: 24px;  background-repeat: no-repeat; }
-#leaderboard_button { background-image: url("res/leaderboard.png") ;    BACKGROUNd-size: 24px; background-repeat: no-repeat; }
-
-.rebirth_container {
-    margin-left: auto; /* Pushes Rebirth elements to the far right */
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
-}
-
-.rebirth_text {
-    font-size: 10px;
-    color: #aaaaaa;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-#rebirth_button {
-    width: auto;
-    padding: 0 40px;
-    font-size: 14px;
-    font-weight: 900;
-    color: #111;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+nav > .rebirth_container > button {
+    width: 38px;
     height: 38px;
-    border-radius: 8px;
     background-color: #F8CD47;
+    background-size: cover;
+    background-position: center;
     border: none;
     cursor: pointer;
+    border-radius: 8px;
+    flex-shrink: 0;
 }
 
-#rebirth_button:disabled {
-    opacity: 0.5;
+nav > .rebirth_container > button:HOVER { background-color: #ffe7a1; }
+nav > .rebirth_container > button:ACTIVE { background-color: #e6ac01; }
+
+#achievements_button { background-image: url("res/achievement.png"); background-size: 24px; background-repeat: no-repeat; }
+#leaderboard_button { background-image: url("res/leaderboard.png"); background-size: 24px; background-repeat: no-repeat; }
+#rebirth_upgrade_button { background-image: url("res/rebirth.png"); background-size: 24px; background-repeat: no-repeat; }
+
+.rebirth_container {
+    margin-left: auto; 
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Rebirth Progress Tlačítko (Kombinace baru a tlačítka) */
+#rebirth_button {
+    width: 200px;
+    height: 40px;
+    position: relative;
+    background: linear-gradient(to bottom, #26251e, #36352a);
+    border: 2px solid #48535e;
+    border-radius: 8px;
+    padding: 0;
+    overflow: hidden;
     cursor: not-allowed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
 }
 
-/* ── layout ─────────────────────────────────────────── */
+/* Plnící se zářivý ukazatel */
+.rebirth_btn_fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%; 
+    background: linear-gradient(to right, #cbb811 0%, #fce625 100%);
+    box-shadow: 0 0 10px rgba(248, 252, 37, 0.5);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+}
+
+/* Lesklý přechodový proužek přes bar */
+.rebirth_btn_fill::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background: linear-gradient(
+        rgba(255,255,255,0.15) 0%,
+        rgba(255,255,255,0) 50%,
+        rgba(0,0,0,0.15) 100%
+    );
+}
+
+/* Text uvnitř progress baru */
+.rebirth_btn_text {
+    position: relative;
+    z-index: 2;
+    font-size: 12px;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 2px rgba(0, 0, 0, 0.5);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* STAV: Rebirth je připraven (Tlačítko svítí a pulzuje) */
+#rebirth_button:not(:disabled) {
+    cursor: pointer;
+    border-color: #00e5ff;
+    animation: ready_glow 2s infinite alternate;
+}
+
+#rebirth_button:not(:disabled) .rebirth_btn_fill {
+    background: linear-gradient(to right, #cbb811 0%, #fce625 100%);
+}
+
+#rebirth_button:not(:disabled) .rebirth_btn_text {
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    color: #ffffff;
+    text-shadow: 0 0 10px #fffb00, 0 2px 4px rgba(0,0,0,0.8);
+}
+
+#rebirth_button:not(:disabled):hover {
+    transform: scale(1.03);
+    border-color: #ffffff;
+}
+
+#rebirth_button:not(:disabled):active {
+    transform: scale(0.97);
+}
+
+@keyframes ready_glow {
+    from { box-shadow: 0 0 8px rgba(255, 251, 0, 0.4), inset 0 1px 2px rgba(255,255,255,0.2); border-color: #fef24f; }
+    to { box-shadow: 0 0 20px rgba(255, 251, 0, 0.8), inset 0 1px 2px rgba(255,255,255,0.4); border-color: #ffffff; }
+}
+
+/* ── Hlavní Layout ──────────────────────────────────── */
 .app {
     display: flex;
     flex-direction: column;
@@ -106,7 +177,6 @@ nav > button:ACTIVE {
     overflow: hidden; 
 }
 
-/* ── section labels ─────────────────────────────────── */
 .section_label {
     font-size: 14px;
     font-weight: 700;
@@ -117,7 +187,7 @@ nav > button:ACTIVE {
     width: 100%;
 }
 
-/* ── cookie / left panel ────────────────────────────── */
+/* ── Levý panel (Coin Okno) ─────────────────────────── */
 .cookie_window {
     display: flex;
     align-items: center;
@@ -126,21 +196,25 @@ nav > button:ACTIVE {
     flex: 1; 
     background-color: #ffffff;
     color: #111;
-    position: relative; /* Traps the rain canvas inside */
+    position: relative; 
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: auto; 
+    scrollbar-width: none;     
+    -ms-overflow-style: none;  
 }
 
-/* Rain Canvas Layering */
+.cookie_window::-webkit-scrollbar {
+    display: none;             
+}
+
 #rain_canvas {
-    position: absolute; /* Locks to the cookie_window boundaries */
+    position: absolute; 
     top: 0; left: 0;
     width: 100%; height: 100%;
-    pointer-events: none; /* Let clicks pass through to the buttons */
-    z-index: 0; /* Background layer */
+    pointer-events: none; 
+    z-index: 0; 
 }
 
-/* Pull text and controls to the foreground above rain */
 .counter_text, 
 .rate_text, 
 .cookie_container, 
@@ -155,6 +229,7 @@ nav > button:ACTIVE {
     font-size: 44px;
     color: #111;
     text-align: center;
+    margin-top: 0px;
 }
 
 .rate_text {
@@ -184,43 +259,70 @@ nav > button:ACTIVE {
     background-size: cover;
     border: none;
     cursor: pointer;
-    transition: width 0.1s, height 0.1s;
+    transition: width 0.05s, height 0.05s;
     position: relative;
     z-index: 1;
     border-radius: 50%;
+    will-change: width, height;
 }
 
-.cookie_button:hover  { width: 230px; height: 230px; }
-.cookie_button:active { width: 250px; height: 250px; }
+.cookie_button:hover  { width: 226px; height: 226px; }
+.cookie_button:active { width: 236px; height: 236px; }
 
-/* orbiting hands */
+/* Obíhající kurzory */
 .orbit_hand {
     width: 30px;
     height: 30px;
     position: absolute;
-    top: 50%;
-    left: 50%;
+    left: calc(50% + 145px * cos(var(--angle)));
+    top: calc(50% + 145px * sin(var(--angle)));
     object-fit: contain;
-    transform:
-        rotate(var(--angle))
-        translateX(145px) 
-        rotate(calc(-1 * var(--angle)));
-    transform-origin: 0 0;
     margin-top: -15px;
     margin-left: -15px;
     z-index: 2;
+    transform-origin: center center;
+    transform: rotate(calc(var(--angle) + 90deg)); 
+    will-change: transform;
 }
 
 .cookie_container.spinning .orbit_hand {
-    animation: orbit_spin 0.5s linear infinite;
+    animation: orbit_spin 10s linear infinite;
 }
 
 @keyframes orbit_spin {
-    from { --angle: 0deg; }
-    to   { --angle: 360deg; }
+    from { transform: rotate(calc(var(--angle) + 90deg)) rotate(0deg); }
+    to   { transform: rotate(calc(var(--angle) + 90deg)) rotate(360deg); }
 }
 
-/* coin controls */
+.cookie_container.click_spin .orbit_hand {
+    animation: individual_360_spin 0.35s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes individual_360_spin {
+    from { transform: rotate(calc(var(--angle) + 90deg)) rotate(0deg); }
+    to   { transform: rotate(calc(var(--angle) + 90deg)) rotate(360deg); }
+}
+
+/* Hardwarově akcelerované vyskakování čísel */
+.floating_click_text {
+    position: fixed;
+    pointer-events: none;
+    font-size: 24px;
+    font-weight: 900;
+    color: #F8CD47;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.7);
+    z-index: 9999;
+    user-select: none;
+    will-change: transform, opacity;
+    animation: floating_text_anim 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes floating_text_anim {
+    0% { transform: translate(-50%, -50%) scale(0.6); opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--random-x)), calc(-50% + var(--random-y))) scale(1.1); opacity: 0; }
+}
+
+/* Ovládání nahrávání mincí */
 .coin_controls {
     display: flex;
     align-items: center;
@@ -252,7 +354,7 @@ nav > button:ACTIVE {
 
 .cookie_button.custom_face { border-radius: 50%; }
 
-/* ── farms (middle) ─────────────────────────────────── */
+/* ── Prostřední panel (Farmy) ───────────────────────── */
 #farms_section {
     flex: 1.2; 
     background-color: #ffffff;
@@ -266,31 +368,35 @@ nav > button:ACTIVE {
 .farm_panel {
     display: flex;
     flex-direction: row;       
-    flex-wrap: wrap;           
+    flex-wrap: nowrap;          
     align-items: flex-end;     
     gap: 8px;
     padding: 12px;
     border-radius: 12px;
     margin-bottom: 16px;
     min-height: 100px;         
-    
-    /* The landscape background */
     background-color: #87CEEB; 
     background-image: url('res/field.png'); 
     background-size: cover;
     background-position: center bottom;
     border: 2px solid #e0e0e0;
+    overflow-x: auto;           
+    overflow-y: hidden;         
+    white-space: nowrap;        
 }
+
+.farm_panel::-webkit-scrollbar { height: 6px; }
+.farm_panel::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.2); border-radius: 3px; }
 
 .farm_img {
     width: 45px;               
     height: 45px;
     object-fit: contain;
-    display: block;
+    display: inline-block;     
     filter: drop-shadow(0px 4px 3px rgba(0,0,0,0.4)); 
 }
 
-/* ── upgrades (right) ───────────────────────────────── */
+/* ── Pravý panel (Základní Upgrady) ─────────────────── */
 #upgrades_window {
     flex: 1;
     background-color: #e5e5e5;
@@ -352,22 +458,9 @@ nav > button:ACTIVE {
     gap: 3px;
 }
 
-.upgrade_title {
-    font-size: 15px;
-    font-weight: 700;
-}
-
-.upgrade_description {
-    font-size: 12px;
-    color: #444;
-}
-
-.upgrade_counter {
-    font-size: 18px;
-    font-weight: 800;
-    color: #111;
-    flex-shrink: 0;
-}
+.upgrade_title { font-size: 15px; font-weight: 700; }
+.upgrade_description { font-size: 12px; color: #444; }
+.upgrade_counter { font-size: 18px; font-weight: 800; color: #111; flex-shrink: 0; }
 
 .upgrade_delete {
     background: none;
@@ -379,10 +472,9 @@ nav > button:ACTIVE {
     transition: opacity 0.2s;
     padding: 4px;
 }
-
 .upgrade_delete:hover { opacity: 1; }
 
-/* ── achievement popup ───────────────────────────────── */
+/* ── Achievement Okna & Popup ────────────────────────── */
 .achievement_popup {
     position: fixed;
     bottom: -100px;
@@ -401,13 +493,11 @@ nav > button:ACTIVE {
 
 .achievement_popup.show { bottom: 20px; }
 .achievement_popup_icon { font-size: 28px; }
-
 .achievement_popup_body { display: flex; flex-direction: column; gap: 3px; }
 .achievement_popup_title { font-size: 11px; color: gold; text-transform: uppercase; letter-spacing: 1px; }
 .achievement_popup_name { font-size: 15px; font-weight: bold; color: white; }
 .achievement_popup_desc { font-size: 12px; color: #aaa; }
 
-/* ── achievements panel ──────────────────────────────── */
 .achievements_panel {
     display: none;
     flex-direction: column;
@@ -435,27 +525,131 @@ nav > button:ACTIVE {
 .achievement_row_name { font-size: 14px; font-weight: bold; color: white; }
 .achievement_row_desc { font-size: 11px; color: #aaa; }
 
-/* ── MOBILE RESPONSIVENESS ──────────────────────────── */
+/* ── Rebirth Skill Tree Panel ───────────────────────── */
+.skill_tree_panel {
+    display: none;
+    flex-direction: column;
+    background-color: #1a1a1a;
+    border: 3px solid gold;
+    border-radius: 12px;
+    width: 80vw;
+    max-width: 720px;
+    height: 75vh;
+    position: absolute;
+    top: 65px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 101;
+    overflow: hidden;
+    color: white;
+}
+
+.skill_tree_panel.open { display: flex; }
+
+.skill_tree_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #111;
+    border-bottom: 2px solid gold;
+}
+
+.skill_tree_header h2 { margin: 0; font-size: 18px; color: gold; }
+
+/* Seskupení prvků tak, aby stav mincí byl vždy VIZUÁLNĚ před tlačítkem X */
+.skill_tree_controls {
+    display: flex;
+    align-items: center;
+    gap: 15px; 
+    margin-left: auto; 
+}
+
+#rebirth_coins_display {
+    font-weight: bold;
+    color: #F8CD47;
+}
+
+.close_skill_tree { background: none; border: none; color: white; font-size: 18px; cursor: pointer; }
+
+.skill_tree_viewport {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    cursor: grab;
+    background: radial-gradient(circle, #252525 10%, #111 90%);
+}
+.skill_tree_viewport:active { cursor: grabbing; }
+
+.skill_tree_map {
+    position: absolute;
+    width: 1200px;
+    height: 1200px;
+    top: -320px; 
+    left: -240px;
+    user-select: none;
+}
+
+.skill_node {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    border: 2px solid #555;
+    background-color: #333;
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.2s;
+    z-index: 5;
+}
+
+/* OPRAVA: Při najetí myší uzel okamžitě skočí vrstvou nad ostatní prvky */
+.skill_node:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(248, 205, 71, 0.6);
+    z-index: 999; 
+}
+
+.skill_node.silver { border-color: #c0c0c0; background-color: #4a535a; }
+.skill_node.gold { border-color: gold; background-color: #5e4f23; }
+.skill_node.diamond { border-color: #00e5ff; background-color: #164853; box-shadow: 0 0 8px #00e5ff; }
+.skill_node.locked { opacity: 0.3; filter: grayscale(100%); cursor: not-allowed; }
+
+/* OPRAVA: Absolutní z-index priorita pro tooltip, aby byl vždy zobrazen VPRĚDU */
+.skill_node::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 58px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.95);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.15s ease-out;
+    z-index: 99999 !important; 
+    border: 1px solid gold;
+    pointer-events: none; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.skill_node:hover::after { visibility: visible; opacity: 1; }
+
+/* ── Mobilní Responzivita ───────────────────────────── */
 @media screen and (max-width: 860px) {
-    .app {
-        height: auto;
-        min-height: 100vh;
-        overflow-y: auto; 
-    }
-
-    .game {
-        flex-direction: column;
-        height: auto;
-        overflow: visible;
-    }
-
-    .cookie_window, #farms_section, #upgrades_window {
-        flex: none;
-        width: 100%;
-        overflow-y: visible;
-        box-sizing: border-box;
-    }
-
+    .app { height: auto; min-height: 100vh; overflow-y: auto; }
+    .game { flex-direction: column; height: auto; overflow: visible; }
+    .cookie_window, #farms_section, #upgrades_window { flex: none; width: 100%; overflow-y: visible; box-sizing: border-box; }
     .cookie_window { order: 1; padding: 40px 20px; }
     #upgrades_window { order: 2; background-color: #e5e5e5; }
     #farms_section { order: 3; background-color: #b3b3b3; border-left: none; }

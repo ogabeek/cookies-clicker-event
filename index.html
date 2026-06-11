@@ -15,11 +15,29 @@
                 <button id="leaderboard_button" onclick="window.open('https://leaguesofcode.space/leaderboard/')"></button>
 
                 <div class="rebirth_container">
-                    <div id="rebirth_text" class="rebirth_text">Rebirths: 0 | Cost: 100000 Victors | Bonus: +0 per click</div>
-                    <button id="rebirth_button" type="button">REBIRTH</button>
+                    <button id="rebirth_upgrade_button" onclick="toggleupgrades()"></button>
+                    <button id="rebirth_button" type="button" disabled>
+                        <div class="rebirth_btn_fill" id="rebirth_btn_fill"></div>
+                        <span class="rebirth_btn_text" id="rebirth_btn_text">0 / 100,000</span>
+                    </button>
                 </div>
             </nav>
+            
             <div id="achievements_panel" class="achievements_panel"></div>
+
+            <div id="skill_tree_panel" class="skill_tree_panel">
+                <div class="skill_tree_header">
+                    <h2>Rebirth Upgrades</h2>
+                    <div class="skill_tree_controls">
+                        <span id="rebirth_coins_display">Rebirth Coins: 0</span>
+                        <button class="close_skill_tree" onclick="toggleupgrades()">X</button>
+                    </div>
+                </div>
+                <div class="skill_tree_viewport" id="skill_tree_viewport">
+                    <div class="skill_tree_map" id="skill_tree_map">
+                        </div>
+                </div>
+            </div>
 
             <div class="game">
                 <div class="cookie_window">
