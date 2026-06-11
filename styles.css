@@ -443,10 +443,10 @@ nav > .rebirth_container > button:ACTIVE { background-color: #e6ac01; }
     position: absolute;
     bottom: 0;
     left: 0;
-    font-size: 10px;
+    font-size: 15px;
     font-weight: 700;
     background: rgba(0,0,0,0.55);
-    color: #F8CD47;
+    color: #29a510;
     padding: 1px 4px;
     border-radius: 0 4px 0 0;
 }
@@ -506,16 +506,16 @@ nav > .rebirth_container > button:ACTIVE { background-color: #e6ac01; }
     border: 2px solid gold;
     border-radius: 12px;
     padding: 20px;
-    margin-top: 10px;
     width: 320px;
-    max-height: 380px;
+    max-height: 80vh;
     overflow-y: auto;
-    position: absolute;
+    position: fixed;
     top: 65px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 20px;
     z-index: 100;
 }
+
+.achievements_panel.open { display: flex; }
 
 .achievements_panel.open { display: flex; }
 .achievement_row { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 8px; background-color: #2a2a2a; }
@@ -653,4 +653,208 @@ nav > .rebirth_container > button:ACTIVE { background-color: #e6ac01; }
     .cookie_window { order: 1; padding: 40px 20px; }
     #upgrades_window { order: 2; background-color: #e5e5e5; }
     #farms_section { order: 3; background-color: #b3b3b3; border-left: none; }
+}
+
+#afk_prompt {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.afk_inner {
+    background: #1a1a1a;
+    border: 2px solid gold;
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.afk_inner h2 { font-size: 28px; margin: 0; }
+.afk_inner p { color: #aaa; margin: 0; }
+
+#afk_yes {
+    background: gold;
+    color: black;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.golden_victor {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    z-index: 9000;
+    filter: sepia(1) saturate(5) hue-rotate(5deg) brightness(1.4);
+    animation: golden_bob 0.4s ease-in-out infinite alternate;
+    pointer-events: all;
+}
+
+@keyframes golden_bob {
+    from { transform: translateY(0px) rotate(-5deg); }
+    to   { transform: translateY(-8px) rotate(5deg); }
+}
+
+.secret_victor:hover { opacity: 0.8 !important; }
+
+.upgrade_locked {
+    pointer-events: none;
+}
+
+.upgrade_locked .upgrade_icon {
+    filter: brightness(0);
+}
+
+.upgrade_locked .upgrade_title,
+.upgrade_locked .upgrade_description,
+.upgrade_locked .upgrade_counter,
+.upgrade_locked .upgrade_price {
+    color: transparent !important;
+    text-shadow: none;
+    user-select: none;
+}
+
+.upgrade_locked .upgrade_body::after {
+    content: "???";
+    font-size: 15px;
+    font-weight: 700;
+    color: #666;
+}
+
+.upgrade_locked .upgrade_delete {
+    display: none;
+}
+
+.coin_upload_locked {
+    pointer-events: none;
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.coin_upload_hint {
+    display: none;
+    font-size: 11px;
+    color: #F8CD47;
+    font-weight: 600;
+}
+
+.coin_upload_locked ~ .coin_upload_hint {
+    display: inline;
+}
+
+#rebirth_upgrade_button.nav_btn_locked {
+    opacity: 0.35;
+    filter: grayscale(100%);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Nav button tooltips */
+nav button[title] {
+    position: relative;
+}
+
+nav button[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.9);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 9999;
+    border: 1px solid #F8CD47;
+    pointer-events: none;
+    font-weight: 500;
+}
+
+.tutorial_overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.75);
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+}
+
+.tutorial_box {
+    background: #1a1a1a;
+    border: 2px solid #F8CD47;
+    border-radius: 16px;
+    padding: 36px 40px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    color: white;
+    box-shadow: 0 0 40px rgba(248, 205, 71, 0.3);
+}
+
+.tutorial_icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.tutorial_box h2 {
+    font-size: 22px;
+    color: #F8CD47;
+    margin: 0 0 12px 0;
+}
+
+.tutorial_box p {
+    font-size: 14px;
+    color: #ccc;
+    line-height: 1.6;
+    margin: 0 0 24px 0;
+}
+
+.tutorial_box p strong {
+    color: white;
+}
+
+.tutorial_next {
+    background: #F8CD47;
+    color: #111;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.tutorial_next:hover {
+    background: #ffe680;
+}
+
+.tutorial_step.hidden {
+    display: none;
+}
+
+.tutorial_fade_out {
+    animation: tutorial_fade 0.4s ease forwards;
+}
+
+@keyframes tutorial_fade {
+    from { opacity: 1; }
+    to   { opacity: 0; }
 }
