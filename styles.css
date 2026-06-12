@@ -378,7 +378,7 @@ nav > .rebirth_container > button:ACTIVE { background-color: #e6ac01; }
     background-color: #87CEEB; 
     background-image: url('res/field.png'); 
     background-size: cover;
-    background-position: center bottom;
+    background-position: center;
     border: 2px solid #e0e0e0;
     overflow-x: auto;           
     overflow-y: hidden;         
